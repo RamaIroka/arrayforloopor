@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تخطيط درس: المصفوفات وحلقات التكرار في C#</title>
+    <!-- استدعاء خط كايرو من جوجل -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- استدعاء Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- استدعاء FontAwesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- استدعاء مكتبة Three.js للألعاب ثلاثية الأبعاد -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4f46e5', // Indigo 600
+                        secondary: '#ec4899', // Pink 500
+                        dark: '#1e293b', // Slate 800
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+        }
+        .code-block {
+            font-family: 'Courier New', Courier, monospace;
+            direction: ltr;
+            text-align: left;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased leading-relaxed">
+
+    <!-- Header / Hero Section -->
+    <header class="bg-gradient-to-r from-primary to-purple-600 text-white py-16 shadow-lg relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmYiLz48L3N2Zz4=')]"></div>
+        <div class="container mx-auto px-4 max-w-5xl relative z-10">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="md:w-2/3">
+                    <span class="bg-white/20 text-white text-sm font-bold px-3 py-1 rounded-full mb-4 inline-block">تخطيط درس تفاعلي</span>
+                    <h1 class="text-3xl md:text-5xl font-extrabold mb-4 leading-tight">توظيف الذكاء الاصطناعي التوليدي لمعالجة المصفوفات</h1>
+                    <h2 class="text-xl md:text-2xl font-semibold mb-6 text-indigo-100">باستخدام حلقات التكرار (For Loop) في لغة C#</h2>
+                    
+                    <div class="flex flex-wrap gap-4 text-sm font-medium">
+                        <div class="flex items-center gap-2 bg-black/20 px-4 py-2 rounded-lg">
+                            <i class="fa-solid fa-user-graduate text-pink-300"></i>
+                            <span>إعداد: رامة اغبارية – 207787037</span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-black/20 px-4 py-2 rounded-lg">
+                            <i class="fa-solid fa-hourglass-half text-yellow-300"></i>
+                            <span>المدة: 60 دقيقة</span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-black/20 px-4 py-2 rounded-lg">
+                            <i class="fa-solid fa-users text-green-300"></i>
+                            <span>الفئة المستهدفة: مبتدئون في C#</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-1/3 flex justify-center">
+                    <div class="w-48 h-48 bg-white/10 rounded-full flex items-center justify-center border-4 border-white/20 shadow-2xl backdrop-blur-sm">
+                        <i class="fa-solid fa-robot text-7xl text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 max-w-5xl py-12 space-y-12">
+
+        <!-- وصف الدرس و الصورة التوليدية -->
+        <section class="grid md:grid-cols-2 gap-8 items-center">
+            <div class="glass-card p-8 rounded-2xl">
+                <h3 class="text-2xl font-bold text-primary mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-file-alt"></i> وصف الدرس
+                </h3>
+                <p class="text-lg text-slate-600 leading-relaxed">
+                    درس تفاعلي مبتكر ينقل الطالب المبتدئ من استهلاك المعلومات إلى إنتاجها. باستخدام أدوات الذكاء الاصطناعي التوليدي، سيكتشف الطالب كيف يمكن لأسطر قليلة من الكود (For Loop) إدارة كميات كبيرة من البيانات (المصفوفات) بذكاء وسرعة، مع دمج العروض التوليدية، الألعاب، والألغاز البرمجية.
+                </p>
+            </div>
+            
+            <div class="relative group rounded-2xl overflow-hidden shadow-xl border-4 border-indigo-50 bg-white">
+                <div class="p-4 bg-indigo-50/50 border-b border-indigo-50 text-center">
+                    <p class="font-bold text-slate-800 text-lg">🖼️ صورة توليدية</p>
+                </div>
+                <img src="../Images/image_robot.jpg" alt="صورة توليدية" class="w-full h-auto object-cover max-h-80">
+            </div>
+        </section>
+
+        <!-- الأهداف -->
+        <section class="grid md:grid-cols-2 gap-6">
+            <!-- الأهداف التعليمية -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-blue-500">
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-blue-700">
+                    <i class="fa-solid fa-bullseye"></i> الأهداف التعليمية
+                </h3>
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check-circle text-blue-500 mt-1"></i>
+                        <span>أن يربط الطالب بين مفهوم المصفوفة (كوعاء للبيانات) وحلقة for (كمحرك للبيانات).</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check-circle text-blue-500 mt-1"></i>
+                        <span>أن يكتب الطالب حلقة for بلغة C# للمرور على عناصر المصفوفة.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check-circle text-blue-500 mt-1"></i>
+                        <span>أن يتمكن الطالب من تتبع (Trace) قيم المتغيرات داخل حلقة التكرار خطوة بخطوة.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check-circle text-blue-500 mt-1"></i>
+                        <span>أن يستخدم الطالب أدوات الذكاء الاصطناعي لتوليد، تحليل، وتصحيح أكواد C#.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- الأهداف التربوية -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-green-500">
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-green-700">
+                    <i class="fa-solid fa-seedling"></i> الأهداف التربوية
+                </h3>
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-heart text-green-500 mt-1"></i>
+                        <span>كسر حاجز الخوف من البرمجة للمبتدئين من خلال التشبيهات البصرية والألعاب.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-heart text-green-500 mt-1"></i>
+                        <span>تعزيز مهارة "التعلم الذاتي المدعوم بالذكاء الاصطناعي" (AI-Assisted Learning).</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-heart text-green-500 mt-1"></i>
+                        <span>تنمية التفكير المنطقي والخوارزمي عبر تتبع الأكواد وتصحيحها.</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- مقدمة: التشبيه التفاعلي -->
+        <section class="bg-gradient-to-br from-indigo-50 to-white p-8 rounded-3xl shadow-sm border border-indigo-100">
+            <h3 class="text-2xl font-bold text-dark mb-4 flex items-center gap-3">
+                <span class="bg-indigo-100 text-primary p-2 rounded-lg"><i class="fa-solid fa-lightbulb"></i></span>
+                مقدمة: دمج حلقة For مع المصفوفات
+            </h3>
+            <p class="text-lg mb-6 text-slate-700 leading-relaxed">
+                تخيل أن لديك قائمة بأسماء 5 لاعبين في فريقك. لحفظ أسمائهم نستخدم <strong class="text-primary">المصفوفة (Array)</strong>، ولنداء أسمائهم واحداً تلو الآخر لتسليمهم الجوائز، نستخدم <strong class="text-secondary">حلقة التكرار (For Loop)</strong>. الحلقة هي "المساعد الآلي" الذي يمر على كل لاعب ليقوم بالمهمة دون أن نضطر لكتابة الأمر 5 مرات!
+            </p>
+            
+            <div class="bg-dark rounded-xl overflow-hidden shadow-lg mb-4">
+                <div class="bg-slate-700 px-4 py-2 text-slate-300 text-sm font-mono flex justify-between items-center">
+                    <span>Program.cs</span>
+                    <button onclick="runSampleCode()" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs transition shadow flex items-center gap-1">
+                        <i class="fa-solid fa-play"></i> تشغيل الكود
+                    </button>
+                </div>
+                <pre class="p-4 text-sm text-green-400 code-block overflow-x-auto"><code><span class="text-pink-400">string</span>[] players = { <span class="text-yellow-300">"أحمد"</span>, <span class="text-yellow-300">"سارة"</span>, <span class="text-yellow-300">"علي"</span>, <span class="text-yellow-300">"منى"</span>, <span class="text-yellow-300">"عمر"</span> };
+
+<span class="text-pink-400">for</span> (<span class="text-blue-300">int</span> i = <span class="text-orange-300">0</span>; i < <span class="text-orange-300">5</span>; i++)
+{
+    Console.<span class="text-blue-300">WriteLine</span>(<span class="text-yellow-300">"جائزة للاعب: "</span> + players[i]);
+}</code></pre>
+            </div>
+            
+            <!-- نافذة محاكاة تشغيل الكود -->
+            <div id="console-window" class="hidden bg-black text-gray-300 p-4 rounded-xl font-mono text-sm border-2 border-green-500/30 code-block">
+                <div class="text-green-500 mb-2 border-b border-gray-700 pb-2 flex justify-between">
+                    <span>> Console Output:</span>
+                    <button onclick="document.getElementById('console-window').classList.add('hidden')" class="text-gray-500 hover:text-white"><i class="fa-solid fa-times"></i></button>
+                </div>
+                <div id="console-output" class="space-y-1"></div>
+            </div>
+        </section>
+
+        <!-- سيرورة الدرس -->
+        <section>
+            <h2 class="text-3xl font-bold mb-8 text-center"><i class="fa-solid fa-stopwatch text-slate-400"></i> سيرورة الدرس (60 دقيقة)</h2>
+            
+            <div class="space-y-8 relative before:absolute before:inset-0 before:ml-5 md:before:mx-auto md:before:translate-x-0 before:h-full before:w-1 before:bg-gradient-to-b before:from-primary before:to-pink-500">
+                
+                <!-- الخطوة 1 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="hidden md:block w-5/12"></div>
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-primary text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 font-bold">1</div>
+                    <div class="w-full md:w-5/12 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 ml-4 md:ml-0 md:mr-0 z-10">
+                        <h4 class="text-xl font-bold text-primary mb-2">التمهيد: المشكلة والحل السحري</h4>
+                        <span class="text-xs font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded inline-block mb-3">0 - 10 دقائق</span>
+                        <p class="text-sm text-slate-600 mb-3"><strong>المشكلة:</strong> طباعة أسماء 5 طلاب بالطريقة اليدوية المتعبة:</p>
+                        <div class="bg-slate-800 rounded p-3 text-xs text-white code-block mb-3 opacity-70">
+                            Console.WriteLine("أحمد");<br>
+                            Console.WriteLine("سارة");<br>
+                            // ... وهكذا
+                        </div>
+                        <p class="text-sm font-semibold text-secondary mb-2">سؤال للطلاب: ماذا لو كان العدد 1000 طالب؟!</p>
+                        <p class="text-sm text-slate-600 mb-2"><strong>الحل الذكي الأول (المصفوفة):</strong> خزانة أدراج واحدة.</p>
+                        <p class="text-sm text-slate-600"><strong>الحل الذكي الثاني (حلقة for):</strong> الروبوت الذي يمر على الأدراج ويقرأها آلياً.</p>
+                        
+                        <div class="mt-4 rounded-xl overflow-hidden border border-purple-100 shadow-sm">
+                            <div class="bg-purple-50 text-purple-800 p-3 text-sm font-bold flex items-center gap-2 border-b border-purple-100">
+                                <i class="fa-solid fa-video"></i> فيديو توليدي
+                            </div>
+                            <video controls class="w-full bg-black max-h-96">
+                                <source src="../Videos/array_loops.mp4" type="video/mp4">
+                                متصفحك لا يدعم تشغيل الفيديو.
+                            </video>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الخطوة 2 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="hidden md:block w-5/12"></div>
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-blue-500 text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 font-bold">2</div>
+                    <div class="w-full md:w-5/12 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 ml-4 md:ml-0 md:mr-0 z-10">
+                        <h4 class="text-xl font-bold text-blue-600 mb-2">الفهم العميق وتحليل الكود</h4>
+                        <span class="text-xs font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded inline-block mb-3">13 - 25 دقيقة</span>
+                        <p class="text-sm text-slate-600 mb-3">عرض تقديمي عبر منصة <strong class="text-blue-800">جاما (Gamma)</strong>.</p>
+                        <p class="text-sm text-slate-600 mb-3"><strong>القاعدة الذهبية:</strong> الفهرس (Index) في البرمجة يبدأ من (0).</p>
+                        <div class="bg-blue-50 p-3 rounded-lg text-sm text-blue-900 border border-blue-100">
+                            <strong>تشريح أجزاء For Loop:</strong>
+                            <ul class="list-disc list-inside mt-2 space-y-1 text-xs">
+                                <li>التهيئة (int i = 0): نقطة البداية.</li>
+                                <li>شرط الاستمرار (i < 3): حدود التكرار.</li>
+                                <li>التحديث (i++): الخطوة (زيادة 1).</li>
+                                <li>التنفيذ (students[i]): الوصول للبيانات.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الخطوة 3 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div class="hidden md:block w-5/12"></div>
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-green-500 text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 font-bold">3</div>
+                    <div class="w-full md:w-5/12 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 ml-4 md:ml-0 md:mr-0 z-10">
+                        <h4 class="text-xl font-bold text-green-600 mb-2">مختبر التتبع (Trace Table)</h4>
+                        <span class="text-xs font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded inline-block mb-3">25 - 33 دقيقة</span>
+                        <p class="text-sm text-slate-600">محاكاة تنفيذ الكود في ذاكرة الكمبيوتر خطوة بخطوة. اكتشاف الأخطاء المنطقية وتتبع المتغيرات.</p>
+                        <div class="mt-4 text-center">
+                            <a href="#trace-table-section" class="inline-block text-sm text-green-600 bg-green-50 hover:bg-green-100 px-4 py-2 rounded-full transition font-bold">
+                                عرض جدول التتبع <i class="fa-solid fa-arrow-down"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- جدول التتبع -->
+        <section id="trace-table-section" class="bg-white p-6 md:p-8 rounded-3xl shadow-md border-t-4 border-t-dark">
+            <h3 class="text-2xl font-bold mb-6 text-center flex items-center justify-center gap-2">
+                <i class="fa-solid fa-table text-slate-400"></i> جدول تتبع الكود (Trace Table)
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse rounded-lg overflow-hidden">
+                    <thead>
+                        <tr class="bg-slate-800 text-white text-sm md:text-base">
+                            <th class="border-b-2 border-slate-600 p-4 font-semibold w-24">الدورة</th>
+                            <th class="border-b-2 border-slate-600 p-4 font-semibold text-center">قيمة العداد (i)</th>
+                            <th class="border-b-2 border-slate-600 p-4 font-semibold text-center">فحص الشرط (i < 3)</th>
+                            <th class="border-b-2 border-slate-600 p-4 font-semibold">أمر التنفيذ (المخرج على الشاشة)</th>
+                            <th class="border-b-2 border-slate-600 p-4 font-semibold">التحديث (i++)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm md:text-base">
+                        <tr class="hover:bg-slate-50 border-b border-slate-200 transition-colors">
+                            <td class="p-4 font-bold text-center bg-slate-100">1</td>
+                            <td class="p-4 text-center font-mono">0</td>
+                            <td class="p-4 text-center"><span class="bg-green-100 text-green-800 py-1 px-3 rounded-full text-xs font-bold">صحيح (True)</span></td>
+                            <td class="p-4 font-mono text-slate-600">الطالب: أحمد</td>
+                            <td class="p-4 text-slate-500">تصبح i تساوي 1</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 border-b border-slate-200 transition-colors">
+                            <td class="p-4 font-bold text-center bg-slate-100">2</td>
+                            <td class="p-4 text-center font-mono">1</td>
+                            <td class="p-4 text-center"><span class="bg-green-100 text-green-800 py-1 px-3 rounded-full text-xs font-bold">صحيح (True)</span></td>
+                            <td class="p-4 font-mono text-slate-600">الطالب: سارة</td>
+                            <td class="p-4 text-slate-500">تصبح i تساوي 2</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 border-b border-slate-200 transition-colors">
+                            <td class="p-4 font-bold text-center bg-slate-100">3</td>
+                            <td class="p-4 text-center font-mono">2</td>
+                            <td class="p-4 text-center"><span class="bg-green-100 text-green-800 py-1 px-3 rounded-full text-xs font-bold">صحيح (True)</span></td>
+                            <td class="p-4 font-mono text-slate-600">الطالب: محمود</td>
+                            <td class="p-4 text-slate-500">تصبح i تساوي 3</td>
+                        </tr>
+                        <tr class="bg-red-50 hover:bg-red-100 transition-colors">
+                            <td class="p-4 font-bold text-center bg-red-100 text-red-700">4</td>
+                            <td class="p-4 text-center font-mono text-red-700">3</td>
+                            <td class="p-4 text-center"><span class="bg-red-200 text-red-800 py-1 px-3 rounded-full text-xs font-bold">خاطئ (False)</span></td>
+                            <td class="p-4 font-bold text-red-600">يتم الخروج من الحلقة فوراً</td>
+                            <td class="p-4 text-center">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- الأنشطة والفعاليات -->
+        <section>
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-3xl font-bold"><i class="fa-solid fa-gamepad text-primary"></i> الأنشطة والفعاليات</h2>
+                <span class="bg-primary/10 text-primary font-bold px-4 py-2 rounded-lg">المدة: 30 دقيقة</span>
+            </div>
+
+            <div class="flex flex-col gap-6">
+                <!-- فعالية 1 (مضمنة بالكامل) -->
+                <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow">
+                    <div class="flex flex-col md:flex-row h-full">
+                        <div class="bg-blue-500 p-8 text-white md:w-1/3 flex flex-col justify-center items-center text-center">
+                            <i class="fa-solid fa-brain text-5xl mb-4"></i>
+                            <h4 class="font-bold text-2xl mb-4">تحدي الذكاء الاصطناعي</h4>
+                            <p class="text-blue-100 text-sm mb-6 leading-relaxed">كويز سريع يركز على صميم دمج for loop مع المصفوفات (توقع المخرجات، الفهرس الصحيح، اكتشاف الأخطاء).</p>
+                            <div class="text-sm bg-blue-600/50 p-3 rounded-lg font-semibold w-full flex flex-col items-center justify-center gap-2 border border-blue-400">
+                                <span><i class="fa-solid fa-wrench"></i> منصة Wayground</span>
+                                <span class="text-xs text-blue-200">كود: 54092622</span>
+                            </div>
+                        </div>
+                        <div class="md:w-2/3 min-h-[500px] relative bg-slate-50">
+                            <!-- تضمين أداة Wayground عبر Iframe -->
+                            <iframe src="https://wayground.com/join?gc=54092622" class="w-full h-full absolute inset-0 border-0" allow="fullscreen" title="Wayground Quiz"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- فعالية 2 (مبرمج الألعاب - لعبة 3D مدمجة) -->
+                    <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-[500px]">
+                        <div class="bg-purple-500 p-4 text-white shrink-0 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-lg"><i class="fa-solid fa-cube ml-2"></i> مبرمج الألعاب (3D)</h4>
+                                <p class="text-purple-100 text-xs mt-1">تتبع عناصر المصفوفة في بيئة ثلاثية الأبعاد</p>
+                            </div>
+                            <div id="game-status" class="bg-purple-700/50 px-3 py-1 rounded font-mono text-sm border border-purple-400/30" dir="ltr">
+                                Ready
+                            </div>
+                        </div>
+                        
+                        <!-- بيئة اللعبة 3D -->
+                        <div id="game-container" class="flex-1 bg-slate-900 relative overflow-hidden cursor-crosshair">
+                            <!-- Canvas سيتم توليده هنا بواسطة Three.js -->
+                            
+                            <!-- زر التشغيل -->
+                            <div class="absolute bottom-6 right-1/2 translate-x-1/2 z-10 flex flex-col items-center">
+                                <button onclick="startGameLoop()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.5)] text-sm flex items-center gap-2 transition transform hover:scale-105 active:scale-95">
+                                    <i class="fa-solid fa-play"></i> تشغيل (Run For Loop)
+                                </button>
+                            </div>
+
+                            <!-- طبقة ترحيبية فوق اللعبة -->
+                            <div id="game-overlay" class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center z-20 pointer-events-none transition-opacity duration-500">
+                                <i class="fa-solid fa-gamepad text-6xl text-purple-400 mb-4 animate-bounce"></i>
+                                <h3 class="text-white font-bold text-2xl drop-shadow-lg mb-2">لعبة المصفوفة</h3>
+                                <p class="text-purple-200 text-sm bg-purple-900/50 px-4 py-2 rounded-full border border-purple-500/30">حرك الفأرة لتغيير زاوية الكاميرا</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- فعالية 3 (دردشة جيمني المدمجة) -->
+                    <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-[500px]">
+                        <div class="bg-emerald-500 p-4 text-white text-center shrink-0">
+                            <i class="fa-solid fa-robot text-4xl mb-2"></i>
+                            <h4 class="font-bold text-lg">دردشة التحدي المفتوح</h4>
+                            <p class="text-emerald-100 text-xs mt-1">تحدث مع جيمني مباشرة!</p>
+                        </div>
+                        
+                        <!-- Chat Interface -->
+                        <div class="flex-1 bg-slate-50 flex flex-col overflow-hidden">
+                            <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 scroll-smooth">
+                                <!-- رسالة ترحيبية -->
+                                <div class="flex items-start gap-3 w-full">
+                                    <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+                                        <i class="fa-solid fa-robot"></i>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-2xl rounded-tr-none shadow-sm text-sm text-slate-700 border border-slate-100 leading-relaxed max-w-[85%]">
+                                        مرحباً! أنا جيمني 🤖. يمكنك أن تطلب مني شرح الكود بأي طريقة تريدها. جرب الضغط على الزر أدناه:
+                                        <button onclick="fillChatInput('اشرح لي الكود مجدداً ولكن بتشبيه من عالم كرة القدم')" class="mt-3 block w-full text-right bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold p-2 rounded-lg text-xs transition border border-emerald-200">
+                                            ⚽ "اشرح الكود بتشبيه كرة القدم"
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- منطقة الإدخال -->
+                            <div class="p-3 bg-white border-t border-slate-200 flex gap-2 shrink-0">
+                                <input type="text" id="chat-input" placeholder="اكتب سؤالك هنا..." class="flex-1 bg-slate-100 border-none rounded-full px-4 text-sm focus:ring-2 focus:ring-emerald-500 outline-none" onkeypress="handleChatEnter(event)">
+                                <button onclick="sendChatMessage()" class="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition shadow shrink-0">
+                                    <i class="fa-solid fa-paper-plane rtl:-scale-x-100"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center mt-12 border-t-4 border-primary">
+        <p class="mb-2">تم إنشاء هذه الصفحة بناءً على تخطيط الدرس للمعلمة <strong>رامة اغبارية</strong></p>
+        <p class="text-sm text-slate-500"><i class="fa-solid fa-code"></i> البرمجة لغة المستقبل، والذكاء الاصطناعي أداة للإبداع</p>
+    </footer>
+
+    <!-- سكريبت لتشغيل محاكاة الكود -->
+    <script>
+        function runSampleCode() {
+            const consoleWin = document.getElementById('console-window');
+            const output = document.getElementById('console-output');
+            
+            consoleWin.classList.remove('hidden');
+            output.innerHTML = '';
+            
+            const players = ["أحمد", "سارة", "علي", "منى", "عمر"];
+            let delay = 0;
+            
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    // إضافة سطر جديد
+                    const line = document.createElement('div');
+                    line.className = "text-gray-300";
+                    line.innerHTML = `<span class="text-blue-400">[${i}]</span> جائزة للاعب: <span class="text-white font-bold">${players[i]}</span>`;
+                    output.appendChild(line);
+                    
+                    // تمرير النافذة للأسفل
+                    consoleWin.scrollTop = consoleWin.scrollHeight;
+                }, delay);
+                delay += 800; // تأخير 800 مللي ثانية بين كل طباعة لمحاكاة الحلقة ببطء
+            }
+            
+            setTimeout(() => {
+                const done = document.createElement('div');
+                done.className = "text-green-400 mt-2 text-xs";
+                done.innerText = "✓ انتهت الحلقة (Loop Finished)";
+                output.appendChild(done);
+            }, delay + 200);
+        }
+    </script>
+
+    <!-- سكريبت دردشة جيمني -->
+    <script>
+        const apiKey = ""; // المفتاح مزود تلقائياً عبر البيئة
+        const model = "gemini-2.5-flash-preview-09-2025";
+        const systemPrompt = "أنت مساعد ذكي لتعليم البرمجة بلغة C#. تشرح المفاهيم (خاصة المصفوفات وحلقات for) للطلاب المبتدئين بطريقة مبسطة، مرحة، وتستخدم تشبيهات من الحياة اليومية مثل كرة القدم. أجب دائماً باللغة العربية. كن موجزاً وشجع الطالب.";
+
+        async function fetchWithBackoff(url, options, retries = 5) {
+            const delays = [1000, 2000, 4000, 8000, 16000];
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) throw new Error('Status ' + response.status);
+                    return await response.json();
+                } catch (err) {
+                    if (i === retries - 1) throw err;
+                    await new Promise(res => setTimeout(res, delays[i]));
+                }
+            }
+        }
+
+        async function sendChatMessage() {
+            const inputEl = document.getElementById('chat-input');
+            const message = inputEl.value.trim();
+            if (!message) return;
+
+            appendMessage(message, 'user');
+            inputEl.value = '';
+
+            const loadingId = appendLoading();
+
+            try {
+                const payload = {
+                    contents: [{ parts: [{ text: message }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] }
+                };
+
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                
+                const data = await fetchWithBackoff(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، لم أتمكن من إيجاد إجابة.";
+                
+                removeLoading(loadingId);
+                appendMessage(reply, 'bot');
+
+            } catch (error) {
+                console.error('Error:', error);
+                removeLoading(loadingId);
+                appendMessage("حدث خطأ في الاتصال، يرجى المحاولة لاحقاً.", 'error');
+            }
+        }
+
+        function appendMessage(text, sender) {
+            const chatMessages = document.getElementById('chat-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex items-start gap-3 w-full ' + (sender === 'user' ? 'flex-row-reverse' : '');
+            
+            let iconHtml = '';
+            let msgBubbleClass = '';
+
+            if (sender === 'user') {
+                iconHtml = `<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0"><i class="fa-solid fa-user"></i></div>`;
+                msgBubbleClass = 'bg-blue-500 text-white p-3 rounded-2xl rounded-tl-none shadow-sm text-sm break-words';
+            } else if (sender === 'bot') {
+                iconHtml = `<div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0"><i class="fa-solid fa-robot"></i></div>`;
+                msgBubbleClass = 'bg-white text-slate-700 border border-slate-100 p-3 rounded-2xl rounded-tr-none shadow-sm text-sm break-words leading-relaxed';
+            } else {
+                iconHtml = `<div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 shrink-0"><i class="fa-solid fa-exclamation-triangle"></i></div>`;
+                msgBubbleClass = 'bg-red-50 text-red-700 border border-red-100 p-3 rounded-2xl rounded-tr-none shadow-sm text-sm break-words';
+            }
+
+            // معالجة بسيطة لتنسيق النصوص (Markdown)
+            const formattedText = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+
+            msgDiv.innerHTML = `
+                ${iconHtml}
+                <div class="max-w-[85%] ${msgBubbleClass}">
+                    ${formattedText}
+                </div>
+            `;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function appendLoading() {
+            const id = 'loading-' + Date.now();
+            const chatMessages = document.getElementById('chat-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.id = id;
+            msgDiv.className = 'flex items-start gap-3 w-full';
+            msgDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0"><i class="fa-solid fa-robot"></i></div>
+                <div class="bg-white border border-slate-100 p-3 rounded-2xl rounded-tr-none shadow-sm text-sm flex gap-1 items-center max-w-[85%]">
+                    <span class="w-2 h-2 bg-emerald-400 rounded-full animate-bounce"></span>
+                    <span class="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></span>
+                    <span class="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                </div>
+            `;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return id;
+        }
+
+        function removeLoading(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        function handleChatEnter(e) {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        function fillChatInput(text) {
+            document.getElementById('chat-input').value = text;
+            sendChatMessage();
+        }
+    </script>
+
+    <!-- سكريبت لعبة 3D (Three.js) -->
+    <script>
+        let scene, camera, renderer, cubes = [], player;
+        let isPlayingGame = false;
+
+        function init3DGame() {
+            const container = document.getElementById('game-container');
+            if(!container || typeof THREE === 'undefined') return;
+
+            // إعداد المشهد
+            scene = new THREE.Scene();
+            
+            // إعداد الكاميرا
+            camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(0, 4, 8);
+            camera.lookAt(0, 0, 0);
+
+            // إعداد المصير (Renderer)
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // الإضاءة
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(5, 10, 7);
+            scene.add(dirLight);
+
+            // إنشاء المصفوفة (5 مكعبات)
+            const arraySize = 5;
+            const spacing = 2.2;
+            const startX = -((arraySize - 1) * spacing) / 2;
+            
+            const cubeGeo = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+            
+            for(let i = 0; i < arraySize; i++) {
+                // مادة شفافة وزجاجية قليلاً لتمثيل "الذاكرة"
+                const cubeMat = new THREE.MeshStandardMaterial({ 
+                    color: 0x8b5cf6, // Purple
+                    transparent: true,
+                    opacity: 0.8,
+                    roughness: 0.2,
+                    metalness: 0.1
+                });
+                
+                const cube = new THREE.Mesh(cubeGeo, cubeMat);
+                cube.position.set(startX + i * spacing, 0, 0);
+                
+                // إضافة حواف للمكعب ليكون أوضح
+                const edges = new THREE.EdgesGeometry(cubeGeo);
+                const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2 }));
+                cube.add(line);
+
+                scene.add(cube);
+                cubes.push(cube);
+            }
+
+            // إنشاء اللاعب / المؤشر (كرة مضيئة)
+            const playerGeo = new THREE.SphereGeometry(0.5, 32, 32);
+            const playerMat = new THREE.MeshStandardMaterial({ 
+                color: 0x10b981, // Emerald
+                emissive: 0x10b981,
+                emissiveIntensity: 0.5
+            });
+            player = new THREE.Mesh(playerGeo, playerMat);
+            // إخفاء اللاعب في البداية
+            player.position.set(-10, 2, 0); 
+            scene.add(player);
+
+            // تحديث الأبعاد عند تغيير حجم الشاشة
+            window.addEventListener('resize', () => {
+                if(container.clientWidth === 0) return;
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+
+            // حركة تفاعلية بسيطة بالماوس (Parallax)
+            container.addEventListener('mousemove', (e) => {
+                if(isPlayingGame) return; // تعطيل التحريك اليدوي أثناء عمل الحلقة
+                const rect = container.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
+                const y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
+                
+                // تحريك الكاميرا بنعومة
+                camera.position.x = x * 3;
+                camera.position.y = 4 + y * 2;
+                camera.lookAt(0, 0, 0);
+            });
+
+            // بدء حلقة الرسم (Animation Loop)
+            animateGame();
+        }
+
+        function animateGame() {
+            requestAnimationFrame(animateGame);
+            
+            // دوران بسيط للمكعبات
+            if(!isPlayingGame) {
+                cubes.forEach((cube) => {
+                    cube.rotation.x += 0.005;
+                    cube.rotation.y += 0.005;
+                });
+            }
+            
+            renderer.render(scene, camera);
+        }
+
+        // دالة تشغيل محاكاة For Loop
+        window.startGameLoop = function() {
+            if(isPlayingGame) return;
+            isPlayingGame = true;
+            
+            // إخفاء الطبقة الترحيبية
+            document.getElementById('game-overlay').style.opacity = '0';
+            
+            // إعادة الكاميرا للوضع المثالي
+            camera.position.set(0, 5, 9);
+            camera.lookAt(0, 0, 0);
+
+            // إعادة تعيين المكعبات
+            cubes.forEach(c => {
+                c.rotation.set(0,0,0);
+                c.scale.set(1,1,1);
+                c.material.color.setHex(0x8b5cf6); // ارجاع اللون البنفسجي
+            });
+
+            let i = 0;
+            const speed = 1200; // 1.2 ثانية لكل دورة
+
+            function nextIteration() {
+                if(i < 5) {
+                    // تحديث واجهة المستخدم
+                    document.getElementById('game-status').innerText = `i = ${i} | [Array Index]`;
+                    
+                    const targetCube = cubes[i];
+                    
+                    // تحريك اللاعب (المؤشر) فوق المكعب
+                    player.position.x = targetCube.position.x;
+                    player.position.y = 2; // يطفو فوقه
+                    player.position.z = 0;
+                    
+                    // تضخيم وتغيير لون العنصر الحالي (تمت معالجته)
+                    targetCube.material.color.setHex(0xec4899); // Pink
+                    targetCube.scale.set(1.3, 1.3, 1.3);
+
+                    // إرجاع العنصر السابق لحجمه الطبيعي وإعطائه لون النجاح
+                    if(i > 0) {
+                        cubes[i-1].scale.set(1, 1, 1);
+                        cubes[i-1].material.color.setHex(0x10b981); // Emerald (تم)
+                    }
+
+                    i++;
+                    setTimeout(nextIteration, speed);
+                } else {
+                    // الانتهاء
+                    if(i > 0) {
+                        cubes[i-1].scale.set(1, 1, 1);
+                        cubes[i-1].material.color.setHex(0x10b981);
+                    }
+                    
+                    document.getElementById('game-status').innerText = "✓ Loop Finished!";
+                    player.position.set(-10, 2, 0); // إخفاء المؤشر
+                    
+                    setTimeout(() => {
+                        isPlayingGame = false;
+                        document.getElementById('game-overlay').style.opacity = '1';
+                        document.getElementById('game-status').innerText = "Ready";
+                    }, 2500);
+                }
+            }
+            
+            // بدء الدورة الأولى
+            nextIteration();
+        }
+
+        // تشغيل التهيئة عند تحميل الصفحة
+        window.addEventListener('load', init3DGame);
+    </script>
+</body>
+</html>
